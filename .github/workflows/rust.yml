@@ -8,6 +8,8 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-C instrument-coverage"
+  LLVM_PROFILE_FILE: '${{ github.workspace }}/target/example.profraw'
 
 jobs:
   build:
@@ -20,3 +22,5 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+    - name: package coverage
+      run: llvm-profdata merge -sparse $LLVM_PROFILE_FILE -o '${{ github.workspace }}/target/example.profdata'

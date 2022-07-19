@@ -27,6 +27,7 @@ fn baz(flag: bool) -> Result<(), Error> {
 
 pub fn foo(flag: bool) -> Result<(), Error> {
     bar(flag)?;
+    baz(flag)?;
     baz(flag)
 }
 
