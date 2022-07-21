@@ -9,7 +9,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: "-C instrument-coverage"
-  LLVM_PROFILE_FILE: '${{ github.workspace }}/crate.profraw"'
+  LLVM_PROFILE_FILE: '${{ github.workspace }}/crate-%p-%m.profraw'
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
     - name: test
       run: cargo test
     - name: bundle coverage
-      run: /usr/lib/llvm-12/bin/llvm-profdata merge -sparse crate.profraw -o crate.profdata
+      run: /usr/lib/llvm-12/bin/llvm-profdata merge -sparse crate-*.profraw -o crate.profdata
     - name: convert to lcov
       run: llvm-cov export \
         $( \
