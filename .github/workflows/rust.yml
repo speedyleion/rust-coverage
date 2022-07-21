@@ -9,7 +9,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: "-C instrument-coverage"
-  LLVM_PROFILE_FILE: '${{ github.workspace }}/target/example.profraw'
+  LLVM_PROFILE_FILE: '${{ github.workspace }}/crate-%p-%m.profraw"'
 
 jobs:
   build:
@@ -20,10 +20,24 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install Rust
       run: rustup toolchain install stable --component llvm-tools-preview
-    - name: Install cargo-llvm-cov
-      uses: taiki-e/install-action@cargo-llvm-cov
-    - name: Generate code coverage
-      run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+    - name: test
+      run: cargo test
+    - name: bundle coverage
+      run: llvm-profdata merge -sparse crate-*.profraw -o crate.profdata
+    - name: convert to lcov
+      run: llvm-cov export \
+        $( \
+          for file in \
+            $( \
+              cargo test --tests --no-run --message-format=json \
+                | jq -r "select(.profile.test == true) | .filenames[]" \
+                | grep -v dSYM - \
+            ); \
+          do \
+            printf "%s %s " -object $file; \
+          done \
+        ) \
+        --instr-profile=crate.profdata --format=lcov > lcov.info
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
