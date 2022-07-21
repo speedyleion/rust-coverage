@@ -20,10 +20,14 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install Rust
       run: rustup toolchain install stable --component llvm-tools-preview
+    - name: Install LLVM and Clang
+      uses: KyleMayes/install-llvm-action@v1
+      with:
+        version: "14.0"
     - name: test
       run: cargo test
     - name: bundle coverage
-      run: /usr/lib/llvm-12/bin/llvm-profdata merge -sparse crate-*.profraw -o crate.profdata
+      run: llvm-profdata merge -sparse crate-*.profraw -o crate.profdata
     - name: convert to lcov
       run: llvm-cov export \
         $( \
