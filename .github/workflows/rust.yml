@@ -8,7 +8,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  RUSTFLAGS: "-C instrument-coverage"
+  RUSTFLAGS: "-C instrument-coverage -C llvm-args='-enable-name-compression=false'"
   LLVM_PROFILE_FILE: '${{ github.workspace }}/crate-%p-%m.profraw'
 
 jobs:
