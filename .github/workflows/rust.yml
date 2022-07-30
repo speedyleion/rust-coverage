@@ -8,22 +8,18 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  RUSTFLAGS: "-C instrument-coverage -C llvm-args='-enable-name-compression=false'"
+  RUSTFLAGS: "-C instrument-coverage"
   LLVM_PROFILE_FILE: '${{ github.workspace }}/crate-%p-%m.profraw'
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v3
     - name: Install Rust
       run: rustup toolchain install stable --component llvm-tools-preview
-    - name: Install LLVM and Clang
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "14.0"
     - name: test
       run: cargo test
     - name: bundle coverage
