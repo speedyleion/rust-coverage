@@ -14,12 +14,12 @@ env:
 jobs:
   build:
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
     - name: Where is llvm
-      run: find / -name llvm-profdata
+      run: find /usr/lib -name llvm-profdata
     - name: Install Rust
       run: rustup toolchain install stable --component llvm-tools-preview
     - name: test
