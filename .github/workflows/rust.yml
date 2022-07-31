@@ -26,11 +26,19 @@ jobs:
       run: cargo test
     - name: bundle coverage
       run: llvm-profdata merge -sparse crate-*.profraw -o crate.profdata
-    - name: Print name
-      run:  for file in $(cargo test --tests --no-run --message-format=json | jq -r "select(.profile.test == true) | .filenames[]" | grep -v dSYM -); do printf "%s %s " --object $file; done
     - name: convert to lcov
-      run: llvm-cov export --instr-profile=crate.profdata --format=lcov 
-        /home/runner/work/rust-coverage/rust-coverage/target/debug/deps/coverage-d3f2b2353cf892a6 \
+      run: llvm-cov export --instr-profile=crate.profdata --format=lcov \
+        $( \
+          for file in \
+            $( \
+              cargo test --tests --no-run --message-format=json \
+                | jq -r "select(.profile.test == true) | .filenames[]" \
+                | grep -v dSYM - \
+            ); \
+          do \
+            printf "%s %s " -object $file; \
+          done \
+        ) \
         > lcov.info
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
