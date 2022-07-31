@@ -28,10 +28,7 @@ jobs:
       run: llvm-profdata merge -sparse crate-*.profraw -o crate.profdata
     - name: convert to lcov
       run: llvm-cov export --instr-profile=crate.profdata --format=lcov \
-        $( \
-          for file in \
-            $( \
-              cargo test --tests --no-run --message-format=json \
+        $( for file in  $( cargo test --tests --no-run --message-format=json \
                 | jq -r "select(.profile.test == true) | .filenames[]" \
                 | grep -v dSYM - \
             ); \
