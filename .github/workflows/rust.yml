@@ -30,7 +30,7 @@ jobs:
       run:  for file in $(cargo test --tests --no-run --message-format=json | jq -r "select(.profile.test == true) | .filenames[]" | grep -v dSYM -); do printf "%s %s " --object $file; done
     - name: convert to lcov
       run: llvm-cov export \
-        --object /home/runner/work/rust-coverage/rust-coverage/target/debug/deps/coverage-d3f2b2353cf892a6 \
+        /home/runner/work/rust-coverage/rust-coverage/target/debug/deps/coverage-d3f2b2353cf892a6 \
         --instr-profile=crate.profdata --format=lcov > lcov.info
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
