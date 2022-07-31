@@ -26,6 +26,8 @@ jobs:
       run: cargo test
     - name: bundle coverage
       run: llvm-profdata merge -sparse crate-*.profraw -o crate.profdata
+    - name: Print name
+      run:  for file in $(cargo test --tests --no-run --message-format=json | jq -r "select(.profile.test == true) | .filenames[]" | grep -v dSYM -); do printf "%s %s " --object $file; done
     - name: convert to lcov
       run: llvm-cov export \
         $(for file in $(cargo test --tests --no-run --message-format=json | jq -r "select(.profile.test == true) | .filenames[]" | grep -v dSYM -); do printf "%s %s " --object $file; done) \
